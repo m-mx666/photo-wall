@@ -725,8 +725,15 @@
   </div>
 
   <script>
-    // 数据 - 包含日期和描述
-    const photoFiles = [
+    // JSONBin 配置
+    const JSONBIN_CONFIG = {
+      binId: '69c56056b7ec241ddca7a176',
+      masterKey: '$2a$10$.M9c.UOXWhNcQj83z9lMf.TiI0GJnuQ.1Qa76Y7bnXLiJz8uTQU1G',
+      apiUrl: 'https://api.jsonbin.io/v3/b/'
+    };
+
+    // 默认照片列表
+    const defaultPhotos = [
       { src: 'http://mmxzyx-picture.oss-cn-beijing.aliyuncs.com/photos/1774539152590_1a188e81e3095136782caace22dcdbac.jpg', date: '2026-03', description: '' },
       { src: 'http://mmxzyx-picture.oss-cn-beijing.aliyuncs.com/photos/1774539152739_7634c9b8c05fbeb98858d411b1444624.jpg', date: '2026-03', description: '' },
       { src: 'http://mmxzyx-picture.oss-cn-beijing.aliyuncs.com/photos/1774539152828_9cdd0a7c1925d4227b521f80a9305069.jpg', date: '2026-03', description: '' },
@@ -740,6 +747,40 @@
     let autoPlayTimer;
     let currentSort = 'date-desc';
     let editingIndex = null;
+
+    // 从 JSONBin 读取照片列表
+    async function loadPhotos() {
+      try {
+        const res = await fetch(`${JSONBIN_CONFIG.apiUrl}${JSONBIN_CONFIG.binId}/latest`, {
+          headers: {
+            'X-Master-Key': JSONBIN_CONFIG.masterKey
+          }
+        });
+        const data = await res.json();
+        if (data.record && data.record.photos && data.record.photos.length > 0) {
+          return data.record.photos;
+        }
+      } catch (err) {
+        console.log('从JSONBin读取失败，使用默认列表');
+      }
+      return defaultPhotos;
+    }
+
+    // 保存照片列表到 JSONBin
+    async function savePhotos() {
+      try {
+        await fetch(`${JSONBIN_CONFIG.apiUrl}${JSONBIN_CONFIG.binId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Master-Key': JSONBIN_CONFIG.masterKey
+          },
+          body: JSON.stringify({ photos: photos })
+        });
+      } catch (err) {
+        console.error('保存到JSONBin失败:', err);
+      }
+    }
 
     // DOM
     const carouselTrack = document.getElementById('carouselTrack');
@@ -903,9 +944,11 @@
     });
 
     // 初始化
-    function init() {
-      photoFiles.forEach((file, i) => {
-        photos.push({ ...file, id: i });
+    async function init() {
+      // 从 JSONBin 加载照片
+      const loadedPhotos = await loadPhotos();
+      loadedPhotos.forEach((file, i) => {
+        photos.push({ ...file, id: Date.now() + i });
       });
       sortPhotos();
       renderCarousel();
@@ -966,11 +1009,12 @@
         modal.classList.remove('active');
       });
 
-      document.getElementById('editSave').addEventListener('click', () => {
+      document.getElementById('editSave').addEventListener('click', async () => {
         if (editingIndex !== null) {
           photos[editingIndex].date = editDate.value || '2026-03';
           photos[editingIndex].description = editDesc.value;
           modal.classList.remove('active');
+          await savePhotos(); // 同步到 JSONBin
           renderGrid();
           // 如果当前在编辑的照片也在轮播里，更新轮播
           updateCarouselPhoto(editingIndex);
@@ -992,9 +1036,10 @@
       document.getElementById('editModal').classList.add('active');
     }
 
-    function deletePhoto(index) {
+    async function deletePhoto(index) {
       if (confirm('确定要删除这张照片吗？')) {
         photos.splice(index, 1);
+        await savePhotos(); // 同步到 JSONBin
         renderCarousel();
         renderGrid();
       }
@@ -1275,9 +1320,14 @@
           const exifDate = await extractExifDate(file);
 
           const ossUrl = await uploadToOSS(file);
-          photos.push({ src: ossUrl, date: exifDate, description: '', id: Date.now() });
+          const newPhoto = { src: ossUrl, date: exifDate, description: '', id: Date.now() };
+          photos.push(newPhoto);
           sortPhotos();
           showUploadStatus('上传成功 ✓');
+
+          // 保存到 JSONBin
+          await savePhotos();
+
           renderCarousel();
           renderGrid();
         } catch (err) {
