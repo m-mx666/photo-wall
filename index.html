@@ -429,6 +429,59 @@
       color: white;
     }
 
+    .photo-menu-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 28px;
+      height: 28px;
+      background: rgba(255,255,255,0.9);
+      border-radius: 50%;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      font-size: 16px;
+      cursor: pointer;
+      z-index: 5;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    .photo-card:hover .photo-menu-btn,
+    .photo-menu-btn.active {
+      display: flex;
+    }
+
+    .photo-menu {
+      display: none;
+      position: absolute;
+      top: 40px;
+      right: 8px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      z-index: 10;
+      overflow: hidden;
+    }
+
+    .photo-menu.show {
+      display: block;
+    }
+
+    .photo-menu button {
+      display: block;
+      width: 100%;
+      padding: 10px 20px;
+      border: none;
+      background: white;
+      font-size: 14px;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .photo-menu button:hover {
+      background: #f5f5f5;
+    }
+
     .photo-action-btn:hover {
       transform: scale(1.05);
     }
@@ -1036,6 +1089,26 @@
       document.getElementById('editModal').classList.add('active');
     }
 
+    // 手机端菜单切换
+    function togglePhotoMenu(btn) {
+      // 关闭其他菜单
+      document.querySelectorAll('.photo-menu.show').forEach(m => m.classList.remove('show'));
+      document.querySelectorAll('.photo-menu-btn.active').forEach(b => b.classList.remove('active'));
+
+      // 切换当前菜单
+      const menu = btn.nextElementSibling;
+      menu.classList.toggle('show');
+      btn.classList.toggle('active');
+    }
+
+    // 点击其他地方关闭菜单
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.photo-menu-btn') && !e.target.closest('.photo-menu')) {
+        document.querySelectorAll('.photo-menu.show').forEach(m => m.classList.remove('show'));
+        document.querySelectorAll('.photo-menu-btn.active').forEach(b => b.classList.remove('active'));
+      }
+    });
+
     async function deletePhoto(index) {
       if (confirm('确定要删除这张照片吗？')) {
         photos.splice(index, 1);
@@ -1155,8 +1228,16 @@
               <button class="photo-action-btn btn-delete" onclick="event.stopPropagation();deletePhoto(${index})">删除</button>
             </div>
           </div>
+          <div class="photo-menu-btn" onclick="event.stopPropagation();togglePhotoMenu(this)">⋮</div>
+          <div class="photo-menu" onclick="event.stopPropagation()">
+            <button onclick="openEditModal(${index})">编辑</button>
+            <button onclick="deletePhoto(${index})">删除</button>
+          </div>
         `;
-        card.addEventListener('click', () => openLightbox(index));
+        card.addEventListener('click', (e) => {
+          if (e.target.closest('.photo-menu-btn') || e.target.closest('.photo-menu')) return;
+          openLightbox(index);
+        });
         photoGrid.appendChild(card);
       });
     }
