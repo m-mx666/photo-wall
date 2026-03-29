@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>我们的照片墙</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Noto+Serif+SC:wght@300;400;500&family=Caveat:wght@400;500&display=swap" rel="stylesheet">
   <style>
     * {
       margin: 0;
@@ -11,189 +14,254 @@
       box-sizing: border-box;
     }
 
-    body {
-      font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
-      background: linear-gradient(135deg, #fff5f5 0%, #fffbf0 50%, #fff9e6 100%);
-      min-height: 100vh;
-      overflow-x: hidden;
+    :root {
+      --cream: #f5f0e8;
+      --warm-white: #faf8f5;
+      --amber: #c9a56a;
+      --amber-light: #e8d5a8;
+      --brown: #5c4a3d;
+      --brown-light: #8b7355;
+      --sepia: #d4c4a8;
+      --shadow: rgba(92, 74, 61, 0.15);
+      --shadow-dark: rgba(92, 74, 61, 0.3);
     }
 
-    /* 音乐控制按钮 */
+    body {
+      font-family: 'Noto Serif SC', 'Source Serif', Georgia, serif;
+      background: var(--cream);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* 胶片颗粒纹理 */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      opacity: 0.04;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* 暖色漏光效果 */
+    .light-leak {
+      position: fixed;
+      width: 40vw;
+      height: 40vw;
+      background: radial-gradient(ellipse at center, rgba(201, 165, 106, 0.15) 0%, transparent 60%);
+      top: -10vw;
+      right: -10vw;
+      pointer-events: none;
+      z-index: 0;
+      animation: leakFloat 20s ease-in-out infinite;
+    }
+
+    .light-leak-2 {
+      position: fixed;
+      width: 30vw;
+      height: 30vw;
+      background: radial-gradient(ellipse at center, rgba(232, 213, 168, 0.12) 0%, transparent 60%);
+      bottom: -5vw;
+      left: -5vw;
+      pointer-events: none;
+      z-index: 0;
+      animation: leakFloat 25s ease-in-out infinite reverse;
+    }
+
+    @keyframes leakFloat {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      33% { transform: translate(2vw, 1vw) rotate(2deg); }
+      66% { transform: translate(-1vw, 2vw) rotate(-1deg); }
+    }
+
+    /* 唱片机音乐控制 */
     .music-control {
       position: fixed;
       bottom: 30px;
       right: 30px;
-      width: 60px;
-      height: 60px;
-      background: rgba(255,255,255,0.9);
-      backdrop-filter: blur(10px);
+      width: 70px;
+      height: 70px;
+      background: var(--brown);
       border-radius: 50%;
       display: flex;
       justify-content: center;
       align-items: center;
       cursor: pointer;
       z-index: 100;
-      box-shadow: 0 8px 30px rgba(255,105,180,0.3);
-      transition: all 0.3s;
+      box-shadow: 0 8px 30px var(--shadow-dark);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .music-control:hover {
-      transform: scale(1.1);
-      box-shadow: 0 12px 40px rgba(255,105,180,0.4);
+      transform: scale(1.08);
+      box-shadow: 0 12px 40px var(--shadow-dark);
     }
 
-    .music-control.playing {
-      animation: musicPulse 2s ease-in-out infinite;
+    .vinyl {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+      position: relative;
+      transition: all 0.4s;
     }
 
-    @keyframes musicPulse {
-      0%, 100% { box-shadow: 0 8px 30px rgba(255,105,180,0.3); }
-      50% { box-shadow: 0 8px 50px rgba(255,105,180,0.5), 0 0 20px rgba(255,105,180,0.3); }
-    }
-
-    .music-icon {
-      font-size: 24px;
+    .vinyl::before {
+      content: '';
       position: absolute;
-      transition: all 0.3s;
+      inset: 8px;
+      border-radius: 50%;
+      background: repeating-radial-gradient(circle at center, transparent 0, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 3px);
     }
 
-    .music-control.playing .music-icon {
-      opacity: 0;
-      transform: scale(0);
-    }
-
-    .music-wave {
+    .vinyl::after {
+      content: '';
       position: absolute;
-      display: flex;
-      gap: 3px;
-      align-items: center;
-      opacity: 0;
-      transition: all 0.3s;
+      inset: 18px;
+      border-radius: 50%;
+      background: var(--amber);
     }
 
-    .music-control.playing .music-wave {
-      opacity: 1;
+    .music-control.playing .vinyl {
+      animation: spin 3s linear infinite;
     }
 
-    .music-wave span {
-      width: 4px;
-      height: 15px;
-      background: linear-gradient(180deg, #ff6b9d, #ffc0cb);
-      border-radius: 2px;
-      animation: wave 1s ease-in-out infinite;
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
     }
 
-    .music-wave span:nth-child(1) { animation-delay: 0s; }
-    .music-wave span:nth-child(2) { animation-delay: 0.15s; }
-    .music-wave span:nth-child(3) { animation-delay: 0.3s; }
-    .music-wave span:nth-child(4) { animation-delay: 0.45s; }
-
-    @keyframes wave {
-      0%, 100% { height: 8px; }
-      50% { height: 20px; }
-    }
-
-    /* 多层模糊光斑背景 */
-    .bg-blur-1 {
-      position: fixed;
-      width: 600px;
-      height: 600px;
-      background: radial-gradient(circle, rgba(255,182,193,0.4) 0%, transparent 70%);
-      top: -200px;
-      left: -200px;
-      filter: blur(80px);
-      z-index: 0;
-      animation: pulse 6s ease-in-out infinite;
-    }
-
-    .bg-blur-2 {
-      position: fixed;
-      width: 500px;
-      height: 500px;
-      background: radial-gradient(circle, rgba(255,215,0,0.3) 0%, transparent 70%);
-      bottom: -150px;
-      right: -150px;
-      filter: blur(60px);
-      z-index: 0;
-      animation: pulse 8s ease-in-out infinite reverse;
-    }
-
-    .bg-blur-3 {
-      position: fixed;
-      width: 400px;
-      height: 400px;
-      background: radial-gradient(circle, rgba(255,154,158,0.25) 0%, transparent 70%);
-      top: 40%;
+    .music-label {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--amber), var(--amber-light));
+      top: 50%;
       left: 50%;
-      transform: translateX(-50%);
-      filter: blur(100px);
-      z-index: 0;
-      animation: pulse 10s ease-in-out infinite;
+      transform: translate(-50%, -50%);
     }
 
-    @keyframes pulse {
-      0%, 100% { opacity: 0.6; transform: scale(1); }
-      50% { opacity: 1; transform: scale(1.1); }
+    /* 胶片孔洞装饰条 */
+    .film-strip {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      width: 28px;
+      background: #2a2218;
+      z-index: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      padding: 10px 0;
+    }
+
+    .film-strip.left { left: 0; }
+    .film-strip.right { right: 0; }
+
+    .film-hole {
+      width: 14px;
+      height: 10px;
+      background: #1a1510;
+      border-radius: 2px;
+      margin: 0 auto;
     }
 
     .container {
       position: relative;
       z-index: 1;
-      max-width: 1200px;
+      max-width: 1100px;
       margin: 0 auto;
-      padding: 40px 20px;
+      padding: 50px 40px;
     }
 
+    /* 标题区 */
     .header {
       text-align: center;
-      padding: 40px 0 60px;
+      padding: 30px 0 60px;
+      position: relative;
     }
+
+    .header::before,
+    .header::after {
+      content: '✦';
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--amber);
+      font-size: 1.2rem;
+      opacity: 0.6;
+    }
+
+    .header::before { left: 10%; }
+    .header::after { right: 10%; }
 
     .header h1 {
-      font-size: 3rem;
-      font-weight: 300;
-      background: linear-gradient(135deg, #ff6b9d, #ffa07a, #ffd700);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: 12px;
-      letter-spacing: 4px;
-      /* 霓虹光晕效果 */
-      text-shadow:
-        0 0 10px rgba(255,107,157,0.8),
-        0 0 20px rgba(255,107,157,0.6),
-        0 0 40px rgba(255,107,157,0.4),
-        0 0 80px rgba(255,107,157,0.2);
-      filter: drop-shadow(0 0 20px rgba(255,107,157,0.5));
-      animation: neonPulse 3s ease-in-out infinite;
+      font-family: 'Playfair Display', 'Noto Serif SC', serif;
+      font-size: 3.2rem;
+      font-weight: 500;
+      color: var(--brown);
+      letter-spacing: 6px;
+      margin-bottom: 16px;
+      position: relative;
+      display: inline-block;
     }
 
-    @keyframes neonPulse {
-      0%, 100% { filter: drop-shadow(0 0 20px rgba(255,107,157,0.5)); }
-      50% { filter: drop-shadow(0 0 40px rgba(255,107,157,0.8)) drop-shadow(0 0 60px rgba(255,182,193,0.4)); }
+    .header h1::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--amber), transparent);
     }
 
     .header p {
-      color: #c9a0a0;
-      font-size: 1.1rem;
-      letter-spacing: 2px;
+      font-family: 'Caveat', cursive;
+      font-size: 1.4rem;
+      color: var(--brown-light);
+      letter-spacing: 1px;
     }
 
-    /* 轮播区域 */
+    /* 轮播区域 - 幻灯片风格 */
     .carousel-section {
-      background: rgba(255,255,255,0.8);
-      backdrop-filter: blur(20px);
-      border-radius: 30px;
-      padding: 40px;
-      margin-bottom: 50px;
-      box-shadow: 0 20px 60px rgba(255,182,193,0.2);
+      background: var(--warm-white);
+      border-radius: 4px;
+      padding: 30px 40px 40px;
+      margin-bottom: 60px;
+      box-shadow: 0 20px 60px var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* 投影幕边框 */
+    .carousel-section::before {
+      content: '';
+      position: absolute;
+      inset: 8px;
+      border: 1px solid var(--amber-light);
+      border-radius: 2px;
+      pointer-events: none;
+    }
+
+    .section-label {
+      font-family: 'Caveat', cursive;
+      font-size: 1.1rem;
+      color: var(--amber);
+      text-align: center;
+      margin-bottom: 20px;
+      letter-spacing: 2px;
     }
 
     .carousel {
       position: relative;
       width: 100%;
-      height: 450px;
-      perspective: 1000px;
+      height: 420px;
+      perspective: 1200px;
     }
 
     .carousel-track {
@@ -205,19 +273,28 @@
 
     .carousel-item {
       position: absolute;
-      width: 280px;
-      height: 350px;
+      width: 300px;
+      height: 380px;
       left: 50%;
       top: 50%;
-      margin-left: -140px;
-      margin-top: -175px;
-      border-radius: 20px;
-      overflow: hidden;
+      margin-left: -150px;
+      margin-top: -190px;
       cursor: pointer;
-      box-shadow: 0 15px 40px rgba(255,105,180,0.3);
-      transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
       opacity: 0;
-      transform: scale(0.8) translateZ(-200px);
+      transform: scale(0.7) translateZ(-300px);
+      transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+      /* 幻灯片边框 */
+      background: var(--warm-white);
+      padding: 12px 12px 50px 12px;
+      box-shadow: 0 15px 40px var(--shadow-dark);
+    }
+
+    .carousel-item::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(201,165,106,0.1) 0%, transparent 50%);
+      pointer-events: none;
     }
 
     .carousel-item.active {
@@ -227,223 +304,238 @@
     }
 
     .carousel-item.prev {
-      opacity: 0.6;
-      transform: scale(0.85) translateX(-180px) translateZ(-100px) rotateY(15deg);
+      opacity: 0.5;
+      transform: scale(0.75) translateX(-200px) translateZ(-200px) rotateY(12deg);
       z-index: 5;
     }
 
     .carousel-item.next {
-      opacity: 0.6;
-      transform: scale(0.85) translateX(180px) translateZ(-100px) rotateY(-15deg);
+      opacity: 0.5;
+      transform: scale(0.75) translateX(200px) translateZ(-200px) rotateY(-12deg);
       z-index: 5;
     }
 
     .carousel-item img {
       width: 100%;
-      height: 100%;
+      height: calc(100% - 30px);
       object-fit: cover;
+      display: block;
+    }
+
+    .carousel-item .slide-date {
+      position: absolute;
+      bottom: 12px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-family: 'Caveat', cursive;
+      font-size: 1rem;
+      color: var(--brown-light);
     }
 
     .carousel-dots {
       display: flex;
       justify-content: center;
-      gap: 12px;
-      margin-top: 30px;
+      gap: 14px;
+      margin-top: 20px;
     }
 
     .carousel-dot {
-      width: 10px;
-      height: 10px;
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
-      background: #ffd4e0;
+      background: var(--sepia);
       cursor: pointer;
       transition: all 0.3s;
+      border: none;
     }
 
     .carousel-dot.active {
-      background: linear-gradient(135deg, #ff6b9d, #ffa07a);
-      width: 30px;
-      border-radius: 5px;
+      background: var(--amber);
+      width: 24px;
+      border-radius: 4px;
     }
 
-    /* 照片网格 */
+    /* 照片网格 - Polaroid风格 */
     .photo-section h2 {
       text-align: center;
-      font-size: 1.8rem;
-      font-weight: 300;
-      color: #c9a0a0;
-      margin-bottom: 30px;
-      letter-spacing: 3px;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 400;
+      color: var(--brown);
+      margin-bottom: 40px;
+      letter-spacing: 4px;
+    }
+
+    .photo-section h2::before,
+    .photo-section h2::after {
+      content: '—';
+      margin: 0 16px;
+      color: var(--amber);
+    }
+
+    .sort-control {
+      text-align: center;
+      margin-bottom: 35px;
+    }
+
+    .sort-btn {
+      padding: 10px 22px;
+      border: 1px solid var(--sepia);
+      background: transparent;
+      border-radius: 2px;
+      cursor: pointer;
+      font-family: 'Noto Serif SC', serif;
+      font-size: 0.85rem;
+      color: var(--brown-light);
+      transition: all 0.3s;
+      margin: 0 6px;
+    }
+
+    .sort-btn:hover {
+      border-color: var(--amber);
+      color: var(--brown);
+    }
+
+    .sort-btn.active {
+      background: var(--brown);
+      border-color: var(--brown);
+      color: var(--cream);
+    }
+
+    .add-btn {
+      background: var(--amber) !important;
+      border-color: var(--amber) !important;
+      color: white !important;
+      font-weight: 500;
+    }
+
+    .add-btn:hover {
+      background: var(--brown) !important;
+      border-color: var(--brown) !important;
     }
 
     .photo-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 24px;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 35px;
     }
 
     .photo-card {
       position: relative;
-      border-radius: 20px;
-      overflow: hidden;
-      aspect-ratio: 4/5;
+      background: var(--warm-white);
+      padding: 12px 12px 45px 12px;
       cursor: pointer;
       transform-style: preserve-3d;
       transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-      animation: cardFloat 4s ease-in-out infinite;
-      /* 渐变边框 */
-      background: linear-gradient(#fff, #fff) padding-box,
-                  linear-gradient(135deg, #ff6b9d, #ffc0cb, #ffd700, #ff9a9e) border-box;
-      border: 3px solid transparent;
+      box-shadow: 0 8px 25px var(--shadow);
+      animation: polaroidFloat 5s ease-in-out infinite;
     }
 
-    .photo-card:nth-child(odd) { animation-delay: -1s; }
-    .photo-card:nth-child(even) { animation-delay: -2s; }
+    .photo-card:nth-child(odd) { animation-delay: -1.5s; }
+    .photo-card:nth-child(even) { animation-delay: -3s; }
 
-    @keyframes cardFloat {
-      0%, 100% { transform: translateY(0) rotateX(0deg); }
-      50% { transform: translateY(-8px) rotateX(2deg); }
+    @keyframes polaroidFloat {
+      0%, 100% { transform: translateY(0) rotate(-1deg); }
+      50% { transform: translateY(-6px) rotate(1deg); }
     }
 
     .photo-card:hover {
-      transform: translateY(-12px) scale(1.03) rotateX(5deg);
-      box-shadow:
-        0 30px 60px rgba(255,105,180,0.35),
-        0 0 40px rgba(255,107,157,0.2);
+      transform: translateY(-10px) scale(1.02) rotate(0deg);
+      box-shadow: 0 20px 45px var(--shadow-dark);
+      z-index: 10;
     }
 
     .photo-card img {
       width: 100%;
-      height: 100%;
+      aspect-ratio: 4/5;
       object-fit: cover;
+      display: block;
       transition: transform 0.5s;
     }
 
     .photo-card:hover img {
-      transform: scale(1.1);
+      transform: scale(1.03);
     }
 
-    .photo-card::after {
-      content: '';
+    .photo-card .photo-date {
       position: absolute;
-      inset: 0;
-      background: linear-gradient(
-        180deg,
-        transparent 0%,
-        transparent 50%,
-        rgba(255,105,180,0.1) 100%
-      );
-      pointer-events: none;
-    }
-
-    /* 上传区域 */
-    .upload-zone {
-      max-width: 500px;
-      margin: 60px auto;
-      padding: 50px;
-      background: rgba(255,255,255,0.7);
-      backdrop-filter: blur(10px);
-      border-radius: 24px;
-      border: 2px dashed #ffd4e0;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-
-    .upload-zone:hover {
-      border-color: #ff6b9d;
-      background: rgba(255,255,255,0.9);
-      transform: translateY(-4px);
-    }
-
-    .upload-zone.dragover {
-      border-color: #ff6b9d;
-      background: rgba(255,255,255,0.95);
-      transform: scale(1.02);
-    }
-
-    .upload-zone input {
-      display: none;
-    }
-
-    .upload-icon {
-      font-size: 50px;
-      margin-bottom: 16px;
-    }
-
-    .upload-zone p {
-      color: #c9a0a0;
-      font-size: 1rem;
-    }
-
-    /* 照片卡片信息 */
-    .photo-info {
-      position: absolute;
-      bottom: 0;
+      bottom: 12px;
       left: 0;
       right: 0;
-      padding: 40px 16px 16px;
-      background: linear-gradient(transparent, rgba(0,0,0,0.5));
-      color: white;
+      text-align: center;
+      font-family: 'Caveat', cursive;
+      font-size: 1.05rem;
+      color: var(--brown-light);
+    }
+
+    .photo-card .photo-desc {
+      position: absolute;
+      bottom: 35px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-family: 'Caveat', cursive;
+      font-size: 0.9rem;
+      color: var(--amber);
+      font-style: italic;
+    }
+
+    /* 照片操作按钮 */
+    .photo-actions {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      display: flex;
+      gap: 6px;
       opacity: 0;
       transition: opacity 0.3s;
     }
 
-    .photo-card:hover .photo-info {
+    .photo-card:hover .photo-actions {
       opacity: 1;
     }
 
-    .photo-date {
-      font-size: 0.85rem;
-      opacity: 0.9;
-    }
-
-    .photo-desc {
-      font-size: 0.9rem;
-      margin-top: 4px;
-      font-style: italic;
-    }
-
-    .photo-actions {
-      display: flex;
-      gap: 8px;
-      margin-top: 8px;
-    }
-
     .photo-action-btn {
-      padding: 4px 12px;
-      border-radius: 12px;
+      padding: 5px 10px;
+      border-radius: 2px;
       border: none;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       cursor: pointer;
+      font-family: 'Noto Serif SC', serif;
       transition: all 0.2s;
     }
 
     .btn-edit {
-      background: rgba(255,255,255,0.9);
-      color: #ff6b9d;
+      background: var(--warm-white);
+      color: var(--brown);
     }
 
     .btn-delete {
-      background: rgba(255,100,100,0.9);
+      background: rgba(180, 80, 60, 0.9);
       color: white;
     }
 
+    .photo-action-btn:hover {
+      transform: scale(1.05);
+    }
+
+    /* 菜单按钮 */
     .photo-menu-btn {
       position: absolute;
       top: 8px;
-      right: 8px;
-      width: 28px;
-      height: 28px;
-      background: rgba(255,255,255,0.9);
-      border-radius: 50%;
+      left: 8px;
+      width: 26px;
+      height: 26px;
+      background: var(--warm-white);
+      border-radius: 2px;
       display: none;
       justify-content: center;
       align-items: center;
-      font-size: 16px;
+      font-size: 14px;
       cursor: pointer;
       z-index: 5;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      box-shadow: 0 2px 6px var(--shadow);
     }
 
     .photo-card:hover .photo-menu-btn,
@@ -454,11 +546,11 @@
     .photo-menu {
       display: none;
       position: absolute;
-      top: 40px;
-      right: 8px;
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      top: 36px;
+      left: 8px;
+      background: var(--warm-white);
+      border-radius: 2px;
+      box-shadow: 0 4px 15px var(--shadow-dark);
       z-index: 10;
       overflow: hidden;
     }
@@ -470,20 +562,58 @@
     .photo-menu button {
       display: block;
       width: 100%;
-      padding: 10px 20px;
+      padding: 10px 18px;
       border: none;
-      background: white;
-      font-size: 14px;
+      background: var(--warm-white);
+      font-size: 13px;
       cursor: pointer;
       text-align: left;
+      font-family: 'Noto Serif SC', serif;
     }
 
     .photo-menu button:hover {
-      background: #f5f5f5;
+      background: var(--cream);
     }
 
-    .photo-action-btn:hover {
-      transform: scale(1.05);
+    /* 上传区域 */
+    .upload-zone {
+      max-width: 480px;
+      margin: 60px auto;
+      padding: 50px;
+      background: var(--warm-white);
+      border-radius: 2px;
+      border: 2px dashed var(--sepia);
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 8px 25px var(--shadow);
+    }
+
+    .upload-zone:hover {
+      border-color: var(--amber);
+      background: #fff;
+      transform: translateY(-4px);
+    }
+
+    .upload-zone.dragover {
+      border-color: var(--amber);
+      background: #fff;
+      transform: scale(1.02);
+    }
+
+    .upload-zone input {
+      display: none;
+    }
+
+    .upload-icon {
+      font-size: 40px;
+      margin-bottom: 14px;
+      opacity: 0.6;
+    }
+
+    .upload-zone p {
+      color: var(--brown-light);
+      font-size: 0.95rem;
     }
 
     /* 编辑弹窗 */
@@ -494,7 +624,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0,0,0,0.5);
+      background: rgba(92, 74, 61, 0.6);
       z-index: 2000;
       justify-content: center;
       align-items: center;
@@ -505,28 +635,40 @@
     }
 
     .edit-modal-content {
-      background: white;
-      padding: 30px;
-      border-radius: 20px;
+      background: var(--warm-white);
+      padding: 35px;
+      border-radius: 2px;
       width: 90%;
-      max-width: 400px;
+      max-width: 380px;
+      box-shadow: 0 25px 60px var(--shadow-dark);
     }
 
     .edit-modal h3 {
-      color: #ff6b9d;
-      margin-bottom: 20px;
+      font-family: 'Playfair Display', serif;
+      font-weight: 500;
+      color: var(--brown);
+      margin-bottom: 24px;
       text-align: center;
+      letter-spacing: 2px;
     }
 
     .edit-modal input,
     .edit-modal textarea {
       width: 100%;
       padding: 12px;
-      border: 2px solid #ffd4e0;
-      border-radius: 12px;
-      font-size: 1rem;
+      border: 1px solid var(--sepia);
+      border-radius: 2px;
+      font-size: 0.95rem;
       margin-bottom: 16px;
-      font-family: inherit;
+      font-family: 'Noto Serif SC', serif;
+      background: var(--cream);
+      color: var(--brown);
+    }
+
+    .edit-modal input:focus,
+    .edit-modal textarea:focus {
+      outline: none;
+      border-color: var(--amber);
     }
 
     .edit-modal textarea {
@@ -542,53 +684,29 @@
     .edit-modal-btns button {
       flex: 1;
       padding: 12px;
-      border-radius: 12px;
+      border-radius: 2px;
       border: none;
-      font-size: 1rem;
+      font-size: 0.95rem;
       cursor: pointer;
+      font-family: 'Noto Serif SC', serif;
       transition: all 0.2s;
     }
 
     .btn-save {
-      background: linear-gradient(135deg, #ff6b9d, #ffa07a);
+      background: var(--amber);
       color: white;
     }
 
     .btn-cancel {
-      background: #f0f0f0;
-      color: #666;
+      background: var(--sepia);
+      color: var(--brown);
     }
 
     .edit-modal-btns button:hover {
       transform: scale(1.02);
     }
 
-    /* 排序控制 */
-    .sort-control {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-
-    .sort-btn {
-      padding: 8px 20px;
-      border: 2px solid #ffd4e0;
-      background: white;
-      border-radius: 20px;
-      cursor: pointer;
-      font-size: 0.9rem;
-      color: #c9a0a0;
-      transition: all 0.3s;
-      margin: 0 4px;
-    }
-
-    .sort-btn:hover,
-    .sort-btn.active {
-      background: linear-gradient(135deg, #ff6b9d, #ffa07a);
-      color: white;
-      border-color: transparent;
-    }
-
-    /* 灯箱 */
+    /* 灯箱 - 电影幕布风格 */
     .lightbox {
       display: none;
       position: fixed;
@@ -596,13 +714,12 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(255,245,250,0.98);
-      backdrop-filter: blur(20px);
+      background: rgba(20, 18, 15, 0.97);
       z-index: 1000;
       justify-content: center;
       align-items: center;
       opacity: 0;
-      transition: opacity 0.4s;
+      transition: opacity 0.5s;
     }
 
     .lightbox.active {
@@ -612,26 +729,37 @@
 
     .lightbox-content {
       position: relative;
-      max-width: 85%;
-      max-height: 85vh;
+      max-width: 90%;
+      max-height: 90vh;
+    }
+
+    /* 幕布光晕效果 */
+    .lightbox::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, rgba(201, 165, 106, 0.08) 0%, transparent 60%);
+      pointer-events: none;
     }
 
     .lightbox img {
       max-width: 100%;
       max-height: 80vh;
-      border-radius: 20px;
-      box-shadow: 0 30px 80px rgba(255,105,180,0.3);
-      animation: lightboxIn 0.5s ease;
+      border-radius: 2px;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+      animation: curtainIn 0.6s ease;
     }
 
-    @keyframes lightboxIn {
+    @keyframes curtainIn {
       from {
         opacity: 0;
-        transform: scale(0.8) translateY(50px);
+        transform: scale(0.92) translateY(20px);
+        filter: blur(8px);
       }
       to {
         opacity: 1;
         transform: scale(1) translateY(0);
+        filter: blur(0);
       }
     }
 
@@ -639,21 +767,23 @@
       position: absolute;
       top: 30px;
       right: 40px;
-      width: 50px;
-      height: 50px;
+      width: 48px;
+      height: 48px;
       border-radius: 50%;
-      background: rgba(255,255,255,0.9);
+      background: var(--brown);
       border: none;
-      font-size: 30px;
+      font-size: 28px;
       cursor: pointer;
-      color: #ff6b9d;
+      color: var(--cream);
       transition: all 0.3s;
       z-index: 1001;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .lightbox-close:hover {
-      background: #ff6b9d;
-      color: #fff;
+      background: var(--amber);
       transform: rotate(90deg);
     }
 
@@ -661,20 +791,22 @@
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
-      width: 60px;
-      height: 60px;
+      width: 55px;
+      height: 55px;
       border-radius: 50%;
-      background: rgba(255,255,255,0.9);
+      background: var(--brown);
       border: none;
-      font-size: 36px;
+      font-size: 32px;
       cursor: pointer;
-      color: #ff6b9d;
+      color: var(--cream);
       transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .lightbox-nav:hover {
-      background: #ff6b9d;
-      color: #fff;
+      background: var(--amber);
       transform: translateY(-50%) scale(1.1);
     }
 
@@ -683,35 +815,59 @@
 
     .lightbox-counter {
       position: absolute;
-      bottom: -50px;
+      bottom: -45px;
       left: 50%;
       transform: translateX(-50%);
-      color: #c9a0a0;
-      font-size: 1rem;
+      font-family: 'Caveat', cursive;
+      font-size: 1.2rem;
+      color: var(--amber-light);
+      letter-spacing: 2px;
     }
 
     /* 响应式 */
     @media (max-width: 768px) {
-      .header h1 { font-size: 2rem; }
-      .carousel { height: 350px; }
-      .carousel-item { width: 220px; height: 280px; margin-left: -110px; margin-top: -140px; }
-      .carousel-item.prev { transform: scale(0.75) translateX(-100px) translateZ(-100px) rotateY(15deg); }
-      .carousel-item.next { transform: scale(0.75) translateX(100px) translateZ(-100px) rotateY(-15deg); }
-      .photo-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; }
+      .film-strip { display: none; }
+      .header h1 { font-size: 2.2rem; letter-spacing: 3px; }
+      .header::before, .header::after { display: none; }
+      .carousel { height: 340px; }
+      .carousel-item { width: 220px; height: 300px; margin-left: -110px; margin-top: -150px; padding: 10px 10px 40px 10px; }
+      .carousel-item.prev { transform: scale(0.7) translateX(-120px) translateZ(-200px) rotateY(10deg); }
+      .carousel-item.next { transform: scale(0.7) translateX(120px) translateZ(-200px) rotateY(-10deg); }
+      .photo-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 25px; }
+      .photo-card { padding: 10px 10px 40px 10px; }
+      .lightbox-nav { width: 44px; height: 44px; font-size: 24px; }
+      .lightbox-prev { left: 10px; }
+      .lightbox-next { right: 10px; }
+      .music-control { width: 56px; height: 56px; bottom: 20px; right: 20px; }
+      .vinyl { width: 40px; height: 40px; }
     }
   </style>
 </head>
 <body>
-  <!-- 多层模糊光斑背景 -->
-  <div class="bg-blur-1"></div>
-  <div class="bg-blur-2"></div>
-  <div class="bg-blur-3"></div>
+  <!-- 胶片孔洞装饰 -->
+  <div class="film-strip left">
+    <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+    <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+    <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+    <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+    <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+  </div>
+  <div class="film-strip right">
+    <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+    <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+    <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+    <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+    <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+  </div>
 
-  <!-- 背景音乐控制 -->
-  <div class="music-control" id="musicControl">
-    <div class="music-icon" id="musicIcon">🎵</div>
-    <div class="music-wave" id="musicWave">
-      <span></span><span></span><span></span><span></span>
+  <!-- 漏光效果 -->
+  <div class="light-leak"></div>
+  <div class="light-leak-2"></div>
+
+  <!-- 唱片机音乐控制 -->
+  <div class="music-control" id="musicControl" title="点击播放/暂停">
+    <div class="vinyl">
+      <div class="music-label"></div>
     </div>
   </div>
   <audio id="bgMusic" loop>
@@ -720,12 +876,13 @@
 
   <div class="container">
     <div class="header">
-      <h1>♡ 我们的照片墙 ♡</h1>
-      <p>每一刻都值得被珍藏</p>
+      <h1>Our Photo Wall</h1>
+      <p>Every moment deserves to be cherished</p>
     </div>
 
     <!-- 轮播区域 -->
     <div class="carousel-section">
+      <div class="section-label">— Featured —</div>
       <div class="carousel" id="carousel">
         <div class="carousel-track" id="carouselTrack"></div>
         <button class="lightbox-nav carousel-nav prev-nav" id="carouselPrev" style="left: 10px;">‹</button>
@@ -736,18 +893,19 @@
 
     <!-- 照片网格 -->
     <div class="photo-section">
-      <h2>- 全部照片 -</h2>
+      <h2>All Photos</h2>
       <div class="sort-control">
-        <button class="sort-btn active" data-sort="date-desc">最新优先</button>
-        <button class="sort-btn" data-sort="date-asc">最早优先</button>
-        <button class="sort-btn" data-sort="name">按名称</button>
+        <button class="sort-btn active" data-sort="date-desc">最新</button>
+        <button class="sort-btn" data-sort="date-asc">最早</button>
+        <button class="sort-btn" data-sort="name">按描述</button>
+        <button class="sort-btn add-btn" onclick="document.getElementById('fileInput').click()">+ 添加照片</button>
       </div>
       <div class="photo-grid" id="photoGrid"></div>
     </div>
 
     <!-- 上传区域 -->
-    <div class="upload-zone" id="uploadZone">
-      <div class="upload-icon">✨</div>
+    <div class="upload-zone" id="uploadZone" style="display:none;">
+      <div class="upload-icon">+</div>
       <p>点击或拖拽添加新照片</p>
       <input type="file" id="fileInput" accept="image/*" multiple>
     </div>
@@ -756,9 +914,9 @@
   <!-- 编辑弹窗 -->
   <div class="edit-modal" id="editModal">
     <div class="edit-modal-content">
-      <h3>♡ 编辑照片 ♡</h3>
+      <h3>Edit Photo</h3>
       <input type="date" id="editDate">
-      <textarea id="editDesc" placeholder="写点描述吧..."></textarea>
+      <textarea id="editDesc" placeholder="添加描述..."></textarea>
       <div class="edit-modal-btns">
         <button class="btn-cancel" id="editCancel">取消</button>
         <button class="btn-save" id="editSave">保存</button>
@@ -843,141 +1001,6 @@
     const lightboxImg = document.getElementById('lightboxImg');
     const lightboxCounter = document.getElementById('lightboxCounter');
 
-    // 星星粒子系统
-    class StarSystem {
-      constructor(count = 60) {
-        this.container = document.createElement('div');
-        this.container.id = 'star-container';
-        this.container.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden;';
-        document.body.appendChild(this.container);
-
-        this.colors = ['#ff6b9d', '#ffc0cb', '#ffd700', '#ff9a9e', '#fecfef', '#ffffff'];
-
-        for (let i = 0; i < count; i++) {
-          const star = document.createElement('div');
-          const size = Math.random() * 3 + 1;
-          const x = Math.random() * 100;
-          const y = Math.random() * 100;
-          const duration = Math.random() * 3 + 2;
-          const delay = Math.random() * 5;
-          const color = this.colors[Math.floor(Math.random() * this.colors.length)];
-
-          star.style.cssText = `
-            position: absolute;
-            width: ${size}px;
-            height: ${size}px;
-            background: ${color};
-            border-radius: 50%;
-            box-shadow: 0 0 ${size * 2}px ${color};
-            left: ${x}%;
-            top: ${y}%;
-            opacity: 0;
-            animation: starTwinkle ${duration}s ease-in-out ${delay}s infinite;
-          `;
-          this.container.appendChild(star);
-        }
-
-        this.injectKeyframes();
-      }
-
-      injectKeyframes() {
-        if (document.getElementById('star-style')) return;
-        const style = document.createElement('style');
-        style.id = 'star-style';
-        style.textContent = `
-          @keyframes starTwinkle {
-            0%, 100% { opacity: 0.2; transform: scale(0.8); }
-            50% { opacity: 1; transform: scale(1.3); }
-          }
-        `;
-        document.head.appendChild(style);
-      }
-    }
-
-    // 飘落粒子系统
-    class FallingParticleSystem {
-      constructor(count = 20) {
-        this.particles = [];
-        this.running = false;
-        this.types = ['🌸', '💮', '🌺', '💕', '✨', '⭐'];
-
-        this.container = document.createElement('div');
-        this.container.id = 'falling-container';
-        this.container.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:2;overflow:hidden;';
-        document.body.appendChild(this.container);
-
-        for (let i = 0; i < count; i++) {
-          const particle = document.createElement('div');
-          particle.textContent = this.types[Math.floor(Math.random() * this.types.length)];
-          const size = Math.random() * 15 + 10;
-          const x = Math.random() * 100;
-          const y = Math.random() * window.innerHeight;
-          const speedY = Math.random() * 2 + 1;
-          const speedX = (Math.random() - 0.5) * 2;
-          const swingAmplitude = Math.random() * 30 + 10;
-          const swingSpeed = Math.random() * 0.02 + 0.01;
-
-          particle.style.cssText = `
-            position: absolute;
-            font-size: ${size}px;
-            left: ${x}%;
-            top: ${y}px;
-            opacity: ${Math.random() * 0.6 + 0.4};
-            pointer-events: none;
-            transition: opacity 0.3s;
-          `;
-
-          this.container.appendChild(particle);
-          this.particles.push({
-            element: particle,
-            x, y, size, speedY, speedX,
-            rotation: Math.random() * 360,
-            rotationSpeed: (Math.random() - 0.5) * 4,
-            swingAmplitude, swingSpeed,
-            time: Math.random() * 100
-          });
-        }
-      }
-
-      start() {
-        if (this.running) return;
-        this.running = true;
-        this.animate();
-      }
-
-      animate() {
-        if (!this.running) return;
-
-        this.particles.forEach(p => {
-          p.time += p.swingSpeed;
-          p.y += p.speedY;
-          p.x += p.speedX + Math.sin(p.time) * p.swingAmplitude * 0.1;
-          p.rotation += p.rotationSpeed;
-
-          p.element.style.left = `${p.x}%`;
-          p.element.style.top = `${p.y}px`;
-          p.element.style.transform = `rotate(${p.rotation}deg)`;
-
-          if (p.y > window.innerHeight + 50) {
-            p.y = -50;
-            p.x = Math.random() * 100;
-          }
-        });
-
-        this.animationId = requestAnimationFrame(() => this.animate());
-      }
-
-      stop() {
-        this.running = false;
-        if (this.animationId) {
-          cancelAnimationFrame(this.animationId);
-        }
-      }
-    }
-
-    // 粒子系统实例
-    let starSystem, fallingSystem;
-
     // 背景音乐控制
     const musicControl = document.getElementById('musicControl');
     const bgMusic = document.getElementById('bgMusic');
@@ -1009,20 +1032,6 @@
       startAutoPlay();
       initSortButtons();
       initEditModal();
-
-      // 初始化粒子系统
-      starSystem = new StarSystem(60);
-      fallingSystem = new FallingParticleSystem(20);
-      fallingSystem.start();
-
-      // 页面不可见时暂停粒子系统
-      document.addEventListener('visibilitychange', () => {
-        if (document.hidden) {
-          fallingSystem.stop();
-        } else {
-          fallingSystem.start();
-        }
-      });
     }
 
     // 排序功能
@@ -1124,7 +1133,7 @@
         const photo = photos[index];
         const dateStr = photo.date ? formatDate(photo.date) : '';
         items[index].innerHTML = `<img src="${photo.src}" alt="照片">
-          ${dateStr ? `<div style="position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,0.5);color:white;padding:2px 8px;border-radius:10px;font-size:11px;">${dateStr}</div>` : ''}`;
+          ${dateStr ? `<div class="slide-date">${dateStr}</div>` : ''}`;
       }
     }
 
@@ -1140,7 +1149,7 @@
         item.dataset.index = index;
 
         const dateStr = formatDate(photo.date);
-        const dateHtml = dateStr ? `<div style="position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,0.5);color:white;padding:2px 8px;border-radius:10px;font-size:11px;">${dateStr}</div>` : '';
+        const dateHtml = dateStr ? `<div class="slide-date">${dateStr}</div>` : '';
 
         item.innerHTML = `<img src="${photo.src}" alt="照片">${dateHtml}`;
         item.addEventListener('click', () => openLightbox(index));
@@ -1213,20 +1222,18 @@
       photos.forEach((photo, index) => {
         const card = document.createElement('div');
         card.className = 'photo-card';
-        card.style.animationDelay = `${index * 0.2}s`;
+        card.style.animationDelay = `${index * 0.15}s`;
 
         const dateStr = formatDate(photo.date);
         const descHtml = photo.description ? `<div class="photo-desc">${photo.description}</div>` : '';
 
         card.innerHTML = `
           <img src="${photo.src}" alt="照片">
-          <div class="photo-info">
-            <div class="photo-date">${dateStr}</div>
-            ${descHtml}
-            <div class="photo-actions">
-              <button class="photo-action-btn btn-edit" onclick="event.stopPropagation();openEditModal(${index})">编辑</button>
-              <button class="photo-action-btn btn-delete" onclick="event.stopPropagation();deletePhoto(${index})">删除</button>
-            </div>
+          ${descHtml}
+          <div class="photo-date">${dateStr}</div>
+          <div class="photo-actions">
+            <button class="photo-action-btn btn-edit" onclick="event.stopPropagation();openEditModal(${index})">编辑</button>
+            <button class="photo-action-btn btn-delete" onclick="event.stopPropagation();deletePhoto(${index})">删除</button>
           </div>
           <div class="photo-menu-btn" onclick="event.stopPropagation();togglePhotoMenu(this)">⋮</div>
           <div class="photo-menu" onclick="event.stopPropagation()">
