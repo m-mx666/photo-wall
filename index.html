@@ -152,29 +152,57 @@
     /* 恋爱计时 */
     .love-counter {
       text-align: right;
+      position: relative;
     }
 
     .love-days {
       font-family: 'Playfair Display', serif;
-      font-size: 5rem;
+      font-size: 4.5rem;
       font-weight: 700;
       line-height: 1;
-      color: var(--accent);
+      background: linear-gradient(135deg, #ff6b9d 0%, #ff8fab 50%, #e84a7f 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
       letter-spacing: -0.03em;
+      animation: heartbeat 2s ease-in-out infinite;
+    }
+
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.02); }
     }
 
     .love-label {
       font-family: 'Caveat', cursive;
-      font-size: 1rem;
-      color: var(--muted);
-      margin-top: 2px;
+      font-size: 1.1rem;
+      background: linear-gradient(90deg, #ff6b9d, #ff8fab);
+      -webkit-background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-top: 4px;
+      font-weight: 500;
     }
 
     .love-since {
       font-family: 'Caveat', cursive;
-      font-size: 0.95rem;
-      color: var(--sepia);
-      margin-top: 6px;
+      font-size: 1rem;
+      color: #d4a5b3;
+      margin-top: 8px;
+    }
+
+    .love-hearts {
+      position: absolute;
+      top: -10px;
+      right: 0;
+      font-size: 1.2rem;
+      animation: floatHeart 3s ease-in-out infinite;
+    }
+
+    @keyframes floatHeart {
+      0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.8; }
+      50% { transform: translateY(-5px) rotate(10deg); opacity: 1; }
     }
 
     /* 报头装饰线 */
@@ -1084,6 +1112,7 @@
 
       <div class="masthead-right">
         <div class="love-counter">
+          <div class="love-hearts">♥</div>
           <div class="love-days" id="loveDays">--</div>
           <div class="love-label">Days Together</div>
           <div class="love-since" id="loveSince">Since Nov 26, 2023</div>
