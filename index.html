@@ -151,13 +151,11 @@
 
     /* 恋爱计时 - 醒目横幅 */
     .love-banner {
-      position: absolute;
-      bottom: 20px;
-      left: 60px;
-      right: 60px;
       display: flex;
       justify-content: center;
-      z-index: 10;
+      padding: 20px 60px;
+      border-bottom: 1px solid var(--sepia);
+      background: linear-gradient(135deg, rgba(255,107,157,0.08), rgba(255,143,171,0.03));
     }
 
     .love-banner-inner {
@@ -1115,20 +1113,20 @@
         <div class="subtitle">每一帧都是值得珍藏的故事</div>
       </div>
 
-      <!-- 恋爱计时 - 醒目展示 -->
-      <div class="love-banner">
-        <div class="love-banner-inner">
-          <span class="love-banner-icon">♥</span>
-          <span class="love-banner-days" id="loveDaysBanner">--</span>
-          <span class="love-banner-unit">天</span>
-          <span class="love-banner-divider">|</span>
-          <span class="love-banner-since" id="loveSinceBanner">2023.11.26 起</span>
-        </div>
-      </div>
-
       <div class="masthead-right">
         <div class="volume-number">2026</div>
         <div class="volume-meta">Vol. I</div>
+      </div>
+    </div>
+
+    <!-- 恋爱计时 - 醒目横幅 -->
+    <div class="love-banner">
+      <div class="love-banner-inner">
+        <span class="love-banner-icon">♥</span>
+        <span class="love-banner-days" id="loveDaysBanner">--</span>
+        <span class="love-banner-unit">天</span>
+        <span class="love-banner-divider">|</span>
+        <span class="love-banner-since" id="loveSinceBanner">2023.11.26 起</span>
       </div>
     </div>
   </header>
