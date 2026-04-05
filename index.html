@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Our Moments — Photo Journal</title>
+  <title>我们的照片墙</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Caveat:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -1090,12 +1090,12 @@
   <header class="masthead">
     <div class="running-header">
       <div class="rh-left">
-        <span>✦ Photo Journal</span>
-        <span>Est. 2026</span>
+        <span>✦ 照片墙</span>
+        <span>始于 2023</span>
       </div>
       <div class="rh-right">
         <span id="rhDate"></span>
-        <span>All Rights Reserved</span>
+        <span>保留所有权利</span>
       </div>
     </div>
 
@@ -1107,7 +1107,7 @@
 
       <div class="masthead-center">
         <h1>Our<span class="line2">Moments</span></h1>
-        <div class="subtitle">Every frame tells a story worth keeping</div>
+        <div class="subtitle">每一帧都是值得珍藏的故事</div>
       </div>
 
       <div class="masthead-right">
@@ -1125,13 +1125,13 @@
   <!-- 控制栏 -->
   <div class="control-bar">
     <div class="control-group">
-      <button class="sort-btn active" data-sort="date-desc">Latest</button>
-      <button class="sort-btn" data-sort="date-asc">Earliest</button>
-      <button class="sort-btn" data-sort="name">By Note</button>
+      <button class="sort-btn active" data-sort="date-desc">最新</button>
+      <button class="sort-btn" data-sort="date-asc">最早</button>
+      <button class="sort-btn" data-sort="name">按备注</button>
     </div>
-    <div class="photo-counter" id="photoCounter">Loading frames...</div>
+    <div class="photo-counter" id="photoCounter">加载中...</div>
     <div class="control-group">
-      <button class="sort-btn add-btn" onclick="document.getElementById('fileInput').click()">+ Add Photo</button>
+      <button class="sort-btn add-btn" onclick="document.getElementById('fileInput').click()">+ 添加照片</button>
     </div>
   </div>
 
@@ -1143,8 +1143,8 @@
   <!-- 专题报道区 -->
   <section class="spread-section">
     <div class="spread-header">
-      <span class="sh-label">Feature</span>
-      <h2>Editorial Spread</h2>
+      <span class="sh-label">精选</span>
+      <h2>时光集</h2>
       <div class="spread-nav">
         <button class="spread-nav-btn" id="spreadPrev">‹</button>
         <button class="spread-nav-btn" id="spreadNext">›</button>
@@ -1178,12 +1178,12 @@
   <!-- 编辑弹窗 -->
   <div class="edit-modal" id="editModal">
     <div class="edit-modal-content">
-      <h3>Edit Photo</h3>
+      <h3>编辑照片</h3>
       <input type="date" id="editDate">
-      <textarea id="editDesc" placeholder="Add a note..."></textarea>
+      <textarea id="editDesc" placeholder="添加备注..."></textarea>
       <div class="edit-modal-btns">
-        <button class="btn-cancel" id="editCancel">Cancel</button>
-        <button class="btn-save" id="editSave">Save</button>
+        <button class="btn-cancel" id="editCancel">取消</button>
+        <button class="btn-save" id="editSave">保存</button>
       </div>
     </div>
   </div>
@@ -1391,8 +1391,8 @@
             <div class="ed-number">${String(i + 1).padStart(2, '0')}</div>
             <div class="ed-caption">${formatDateFull(photo.date)}</div>
             <div class="ed-actions">
-              <button class="ed-action-btn edit" onclick="event.stopPropagation();openEditModal(${i})">Edit</button>
-              <button class="ed-action-btn delete" onclick="event.stopPropagation();deletePhoto(${i})">Delete</button>
+              <button class="ed-action-btn edit" onclick="event.stopPropagation();openEditModal(${i})">编辑</button>
+              <button class="ed-action-btn delete" onclick="event.stopPropagation();deletePhoto(${i})">删除</button>
             </div>
           </div>
         `;
@@ -1505,10 +1505,10 @@
           renderGrid();
           renderSpread();
           closeEditModal();
-          showUploadStatus('Saved ✓');
+          showUploadStatus('已保存 ✓');
         } catch (e) {
           console.error('Save photo failed.', e);
-          showUploadStatus('Save failed ✗');
+          showUploadStatus('保存失败 ✗');
         }
       }
     });
@@ -1519,16 +1519,16 @@
 
     // 删除
     async function deletePhoto(idx) {
-      if (confirm('Delete this photo?')) {
+      if (confirm('确定删除这张照片吗？')) {
         try {
           await removePhoto(photos[idx]);
           sortPhotos();
           renderGrid();
           renderSpread();
-          showUploadStatus('Deleted ✓');
+          showUploadStatus('已删除 ✓');
         } catch (e) {
           console.error('Delete photo failed.', e);
-          showUploadStatus('Delete failed ✗');
+          showUploadStatus('删除失败 ✗');
         }
       }
     }
@@ -1901,7 +1901,7 @@
             break;
           }
 
-          showUploadStatus('Uploading...');
+          showUploadStatus('上传中...');
           const ossUrl = await uploadToOSS(croppedBlob, file.name);
           await savePhoto({
             src: ossUrl,
@@ -1912,10 +1912,10 @@
           sortPhotos();
           renderGrid();
           renderSpread();
-          showUploadStatus('Uploaded ✓');
+          showUploadStatus('已上传 ✓');
         } catch (e) {
           console.error('Upload photo failed.', e);
-          showUploadStatus('Upload failed ✗');
+          showUploadStatus('上传失败 ✗');
         }
       }
       fileInput.value = '';
