@@ -791,6 +791,177 @@
 
     .edit-modal-btns button:hover { transform: scale(1.02); }
 
+    /* ===== 上传裁剪弹窗 ===== */
+    .crop-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(26, 26, 24, 0.82);
+      z-index: 3500;
+      justify-content: center;
+      align-items: center;
+      padding: 18px;
+    }
+
+    .crop-modal.active { display: flex; }
+
+    .crop-modal-content {
+      width: min(1080px, 100%);
+      max-height: calc(100vh - 36px);
+      background: var(--paper);
+      box-shadow: 0 36px 90px rgba(26,26,24,0.3);
+      position: relative;
+      overflow-y: auto;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .crop-modal-content::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--accent);
+      z-index: 1;
+    }
+
+    .crop-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 20px;
+      padding: 28px 30px 16px;
+      border-bottom: 1px solid var(--sepia);
+    }
+
+    .crop-modal-header h3 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 500;
+      font-size: 1.55rem;
+      margin-bottom: 8px;
+      letter-spacing: 0.02em;
+    }
+
+    .crop-modal-header p {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.6;
+      max-width: 520px;
+    }
+
+    .crop-meta {
+      text-align: right;
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      min-width: 180px;
+      line-height: 1.7;
+    }
+
+    .crop-stage-shell {
+      padding: 22px 30px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.4), rgba(242,237,229,0.85));
+    }
+
+    .crop-stage {
+      position: relative;
+      height: clamp(240px, 48vh, 520px);
+      min-height: 240px;
+      background:
+        linear-gradient(45deg, rgba(200,184,154,0.08) 25%, transparent 25%, transparent 75%, rgba(200,184,154,0.08) 75%),
+        linear-gradient(45deg, rgba(200,184,154,0.08) 25%, transparent 25%, transparent 75%, rgba(200,184,154,0.08) 75%);
+      background-size: 28px 28px;
+      background-position: 0 0, 14px 14px;
+      border: 1px solid rgba(200,184,154,0.45);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      touch-action: none;
+    }
+
+    .crop-stage img {
+      max-width: 100%;
+      max-height: 100%;
+      display: block;
+      user-select: none;
+      -webkit-user-drag: none;
+      box-shadow: 0 18px 42px rgba(26,26,24,0.16);
+      pointer-events: none;
+    }
+
+    .crop-selection {
+      position: absolute;
+      border: 2px solid rgba(255,255,255,0.95);
+      box-shadow: 0 0 0 9999px rgba(26,26,24,0.48);
+      cursor: move;
+      display: none;
+      touch-action: none;
+    }
+
+    .crop-selection::before,
+    .crop-selection::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .crop-selection::before {
+      border-left: 1px solid rgba(255,255,255,0.55);
+      border-right: 1px solid rgba(255,255,255,0.55);
+      left: 33.333%;
+      right: 33.333%;
+    }
+
+    .crop-selection::after {
+      border-top: 1px solid rgba(255,255,255,0.55);
+      border-bottom: 1px solid rgba(255,255,255,0.55);
+      top: 33.333%;
+      bottom: 33.333%;
+    }
+
+    .crop-handle {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: white;
+      border: 2px solid var(--accent);
+      box-shadow: 0 2px 10px rgba(26,26,24,0.22);
+    }
+
+    .crop-handle.nw { top: -9px; left: -9px; cursor: nwse-resize; }
+    .crop-handle.ne { top: -9px; right: -9px; cursor: nesw-resize; }
+    .crop-handle.sw { bottom: -9px; left: -9px; cursor: nesw-resize; }
+    .crop-handle.se { bottom: -9px; right: -9px; cursor: nwse-resize; }
+
+    .crop-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      padding: 0 30px 20px;
+      color: var(--muted);
+      font-size: 0.8rem;
+      line-height: 1.6;
+    }
+
+    .crop-toolbar .sort-btn {
+      flex: 0 0 auto;
+    }
+
+    .crop-modal-btns {
+      padding: 0 30px 28px;
+      background: linear-gradient(180deg, rgba(247,244,239,0), rgba(247,244,239,0.92) 18%, rgba(247,244,239,1) 100%);
+      position: sticky;
+      bottom: 0;
+    }
+
     /* ===== 上传区（隐藏） ===== */
     .upload-zone { display: none; }
 
@@ -845,6 +1016,15 @@
       .spread-item { flex: 0 0 260px; }
       .lightbox-prev { left: 8px; }
       .lightbox-next { right: 8px; }
+      .crop-modal { padding: 10px; }
+      .crop-modal-header,
+      .crop-stage-shell,
+      .crop-toolbar,
+      .crop-modal-btns { padding-left: 16px; padding-right: 16px; }
+      .crop-modal-header { flex-direction: column; }
+      .crop-meta { text-align: left; min-width: 0; }
+      .crop-stage { min-height: 220px; height: 36vh; }
+      .crop-toolbar { flex-direction: column; align-items: stretch; }
     }
   </style>
 </head>
@@ -947,6 +1127,38 @@
     </div>
   </div>
 
+  <!-- 上传裁剪弹窗 -->
+  <div class="crop-modal" id="cropModal">
+    <div class="crop-modal-content">
+      <div class="crop-modal-header">
+        <div>
+          <h3>上传前裁剪</h3>
+          <p>拖动裁剪框可以移动位置，拖动四个角的圆点可以调整范围，上传前把最好看的部分留下来。</p>
+        </div>
+        <div class="crop-meta" id="cropMeta">正在生成预览...</div>
+      </div>
+      <div class="crop-stage-shell">
+        <div class="crop-stage" id="cropStage">
+          <img id="cropImage" alt="Crop preview">
+          <div class="crop-selection" id="cropSelection">
+            <span class="crop-handle nw" data-handle="nw"></span>
+            <span class="crop-handle ne" data-handle="ne"></span>
+            <span class="crop-handle sw" data-handle="sw"></span>
+            <span class="crop-handle se" data-handle="se"></span>
+          </div>
+        </div>
+      </div>
+      <div class="crop-toolbar">
+        <span>提示：如果不想裁剪，保留当前完整范围，直接上传就可以。</span>
+        <button class="sort-btn" type="button" id="cropReset">重置裁剪框</button>
+      </div>
+      <div class="edit-modal-btns crop-modal-btns">
+        <button class="btn-cancel" id="cropCancel" type="button">取消</button>
+        <button class="btn-save" id="cropConfirm" type="button">裁剪并上传</button>
+      </div>
+    </div>
+  </div>
+
   <!-- 音乐 -->
   <button class="music-control" id="musicControl">
     <svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
@@ -961,6 +1173,7 @@
     };
 
     const OSS_HOST = 'https://mmxzyx-picture.oss-cn-beijing.aliyuncs.com';
+    const DEFAULT_PHOTO_DATE = '2026-03';
 
     const defaultPhotos = [
       { src: 'http://mmxzyx-picture.oss-cn-beijing.aliyuncs.com/photos/1774539152590_1a188e81e3095136782caace22dcdbac.jpg', date: '2026-03', description: '' },
@@ -977,6 +1190,71 @@
     let currentLbIndex = 0;
     let spreadPos = 0;
     let spreadAutoTimer = null;
+
+    function makePhotoId() {
+      if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+        return window.crypto.randomUUID();
+      }
+      return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    }
+
+    function normalizePhoto(photo = {}) {
+      return {
+        src: photo.src || '',
+        date: photo.date || DEFAULT_PHOTO_DATE,
+        description: typeof photo.description === 'string' ? photo.description : '',
+        id: photo.id || photo.src || makePhotoId()
+      };
+    }
+
+    function getPhotoKey(photo = {}) {
+      return String(photo.id || photo.src || '');
+    }
+
+    function upsertPhotoInList(list, photo) {
+      const normalized = normalizePhoto(photo);
+      const matchIndex = list.findIndex(item => {
+        const itemKey = getPhotoKey(item);
+        const photoKey = getPhotoKey(normalized);
+        return itemKey === photoKey || (item.src && normalized.src && item.src === normalized.src);
+      });
+
+      if (matchIndex === -1) return [...list, normalized];
+
+      const nextList = [...list];
+      nextList[matchIndex] = { ...nextList[matchIndex], ...normalized };
+      return nextList;
+    }
+
+    async function fetchRemotePhotos() {
+      const res = await fetch(`${JSONBIN_CONFIG.apiUrl}${JSONBIN_CONFIG.binId}/latest`, {
+        headers: { 'X-Master-Key': JSONBIN_CONFIG.masterKey }
+      });
+
+      if (!res.ok) {
+        throw new Error(`Load failed: ${res.status}`);
+      }
+
+      const data = await res.json();
+      const remotePhotos = Array.isArray(data?.record?.photos) ? data.record.photos : [];
+      return remotePhotos.map(photo => normalizePhoto(photo));
+    }
+
+    async function writeRemotePhotos(nextPhotos) {
+      const normalizedPhotos = nextPhotos.map(photo => normalizePhoto(photo));
+      const res = await fetch(`${JSONBIN_CONFIG.apiUrl}${JSONBIN_CONFIG.binId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'X-Master-Key': JSONBIN_CONFIG.masterKey },
+        body: JSON.stringify({ photos: normalizedPhotos })
+      });
+
+      if (!res.ok) {
+        throw new Error(`Save failed: ${res.status}`);
+      }
+
+      photos = normalizedPhotos;
+      return normalizedPhotos;
+    }
 
     // 日期格式化
     function formatDate(d) {
@@ -996,25 +1274,29 @@
     // 加载照片
     async function loadPhotos() {
       try {
-        const res = await fetch(`${JSONBIN_CONFIG.apiUrl}${JSONBIN_CONFIG.binId}/latest`, {
-          headers: { 'X-Master-Key': JSONBIN_CONFIG.masterKey }
-        });
-        const data = await res.json();
-        if (data.record && data.record.photos && data.record.photos.length > 0) {
-          return data.record.photos;
-        }
-      } catch (e) {}
-      return defaultPhotos;
+        const remotePhotos = await fetchRemotePhotos();
+        if (remotePhotos.length > 0) return remotePhotos;
+      } catch (e) {
+        console.error('Load photos failed, using default photos instead.', e);
+      }
+      return defaultPhotos.map(photo => normalizePhoto(photo));
     }
 
-    async function savePhotos() {
-      try {
-        await fetch(`${JSONBIN_CONFIG.apiUrl}${JSONBIN_CONFIG.binId}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json', 'X-Master-Key': JSONBIN_CONFIG.masterKey },
-          body: JSON.stringify({ photos: photos })
-        });
-      } catch (e) {}
+    async function savePhoto(photo) {
+      const remotePhotos = await fetchRemotePhotos();
+      const nextPhotos = upsertPhotoInList(remotePhotos, photo);
+      return writeRemotePhotos(nextPhotos);
+    }
+
+    async function removePhoto(photo) {
+      const target = normalizePhoto(photo);
+      const targetKey = getPhotoKey(target);
+      const remotePhotos = await fetchRemotePhotos();
+      const nextPhotos = remotePhotos.filter(item => {
+        const itemKey = getPhotoKey(item);
+        return itemKey !== targetKey && item.src !== target.src;
+      });
+      return writeRemotePhotos(nextPhotos);
     }
 
     // 排序
@@ -1121,6 +1403,11 @@
     document.getElementById('lightboxNext').addEventListener('click', () => lbNav(1));
     document.getElementById('lightbox').addEventListener('click', e => { if (e.target.id === 'lightbox') closeLightbox(); });
     document.addEventListener('keydown', e => {
+      if (document.getElementById('cropModal').classList.contains('active') && e.key === 'Escape') {
+        cancelCropSelection();
+        return;
+      }
+
       if (!document.getElementById('lightbox').classList.contains('active')) return;
       if (e.key === 'Escape') closeLightbox();
       if (e.key === 'ArrowLeft') lbNav(-1);
@@ -1145,13 +1432,23 @@
 
     document.getElementById('editSave').addEventListener('click', async () => {
       if (editingIndex !== null) {
-        photos[editingIndex].date = document.getElementById('editDate').value || '2026-03';
-        photos[editingIndex].description = document.getElementById('editDesc').value;
-        await savePhotos();
-        sortPhotos();
-        renderGrid();
-        renderSpread();
-        closeEditModal();
+        const updatedPhoto = {
+          ...photos[editingIndex],
+          date: document.getElementById('editDate').value || DEFAULT_PHOTO_DATE,
+          description: document.getElementById('editDesc').value
+        };
+
+        try {
+          await savePhoto(updatedPhoto);
+          sortPhotos();
+          renderGrid();
+          renderSpread();
+          closeEditModal();
+          showUploadStatus('Saved ✓');
+        } catch (e) {
+          console.error('Save photo failed.', e);
+          showUploadStatus('Save failed ✗');
+        }
       }
     });
 
@@ -1162,11 +1459,16 @@
     // 删除
     async function deletePhoto(idx) {
       if (confirm('Delete this photo?')) {
-        photos.splice(idx, 1);
-        await savePhotos();
-        sortPhotos();
-        renderGrid();
-        renderSpread();
+        try {
+          await removePhoto(photos[idx]);
+          sortPhotos();
+          renderGrid();
+          renderSpread();
+          showUploadStatus('Deleted ✓');
+        } catch (e) {
+          console.error('Delete photo failed.', e);
+          showUploadStatus('Delete failed ✗');
+        }
       }
     }
 
@@ -1188,19 +1490,265 @@
 
     // 上传
     const fileInput = document.getElementById('fileInput');
+    const cropModal = document.getElementById('cropModal');
+    const cropStage = document.getElementById('cropStage');
+    const cropImage = document.getElementById('cropImage');
+    const cropSelection = document.getElementById('cropSelection');
+    const cropMeta = document.getElementById('cropMeta');
+    const cropReset = document.getElementById('cropReset');
+    const cropCancel = document.getElementById('cropCancel');
+    const cropConfirm = document.getElementById('cropConfirm');
+    const MIN_CROP_SIZE = 60;
+    const cropState = {
+      resolver: null,
+      objectUrl: '',
+      file: null,
+      imageBounds: null,
+      selection: null,
+      drag: null
+    };
 
-    async function compressImage(file, maxW = 1920, q = 0.82) {
+    function revokeCropObjectUrl() {
+      if (cropState.objectUrl) {
+        URL.revokeObjectURL(cropState.objectUrl);
+        cropState.objectUrl = '';
+      }
+    }
+
+    function getCropBoundsRight(bounds) {
+      return bounds.left + bounds.width;
+    }
+
+    function getCropBoundsBottom(bounds) {
+      return bounds.top + bounds.height;
+    }
+
+    function updateCropMeta() {
+      if (!cropState.file || !cropState.imageBounds || !cropState.selection || !cropImage.naturalWidth) {
+        cropMeta.textContent = cropState.file ? cropState.file.name : '正在生成预览...';
+        return;
+      }
+
+      const widthScale = cropImage.naturalWidth / cropState.imageBounds.width;
+      const heightScale = cropImage.naturalHeight / cropState.imageBounds.height;
+      const exportWidth = Math.max(1, Math.round(cropState.selection.width * widthScale));
+      const exportHeight = Math.max(1, Math.round(cropState.selection.height * heightScale));
+
+      cropMeta.innerHTML = `
+        <div>${cropState.file.name}</div>
+        <div>${exportWidth} × ${exportHeight}px</div>
+      `;
+    }
+
+    function renderCropSelection() {
+      if (!cropState.selection) {
+        cropSelection.style.display = 'none';
+        updateCropMeta();
+        return;
+      }
+
+      cropSelection.style.display = 'block';
+      cropSelection.style.left = `${cropState.selection.x}px`;
+      cropSelection.style.top = `${cropState.selection.y}px`;
+      cropSelection.style.width = `${cropState.selection.width}px`;
+      cropSelection.style.height = `${cropState.selection.height}px`;
+      updateCropMeta();
+    }
+
+    function resetCropSelection() {
+      const bounds = cropState.imageBounds;
+      if (!bounds) return;
+
+      const inset = Math.max(18, Math.min(bounds.width, bounds.height) * 0.08);
+      cropState.selection = {
+        x: bounds.left + inset,
+        y: bounds.top + inset,
+        width: Math.max(MIN_CROP_SIZE, bounds.width - inset * 2),
+        height: Math.max(MIN_CROP_SIZE, bounds.height - inset * 2)
+      };
+      renderCropSelection();
+    }
+
+    function syncCropBounds(reset = false) {
+      if (!cropImage.naturalWidth) return;
+
+      const stageRect = cropStage.getBoundingClientRect();
+      const imageRect = cropImage.getBoundingClientRect();
+      if (!imageRect.width || !imageRect.height) return;
+
+      const nextBounds = {
+        left: imageRect.left - stageRect.left,
+        top: imageRect.top - stageRect.top,
+        width: imageRect.width,
+        height: imageRect.height
+      };
+
+      if (!cropState.selection || !cropState.imageBounds || reset) {
+        cropState.imageBounds = nextBounds;
+        resetCropSelection();
+        return;
+      }
+
+      const previousBounds = cropState.imageBounds;
+      const normalized = {
+        x: (cropState.selection.x - previousBounds.left) / previousBounds.width,
+        y: (cropState.selection.y - previousBounds.top) / previousBounds.height,
+        width: cropState.selection.width / previousBounds.width,
+        height: cropState.selection.height / previousBounds.height
+      };
+
+      cropState.imageBounds = nextBounds;
+      cropState.selection = {
+        x: nextBounds.left + normalized.x * nextBounds.width,
+        y: nextBounds.top + normalized.y * nextBounds.height,
+        width: Math.max(MIN_CROP_SIZE, normalized.width * nextBounds.width),
+        height: Math.max(MIN_CROP_SIZE, normalized.height * nextBounds.height)
+      };
+
+      const boundsRight = getCropBoundsRight(nextBounds);
+      const boundsBottom = getCropBoundsBottom(nextBounds);
+      cropState.selection.width = Math.min(cropState.selection.width, boundsRight - nextBounds.left);
+      cropState.selection.height = Math.min(cropState.selection.height, boundsBottom - nextBounds.top);
+      cropState.selection.x = Math.min(Math.max(cropState.selection.x, nextBounds.left), boundsRight - cropState.selection.width);
+      cropState.selection.y = Math.min(Math.max(cropState.selection.y, nextBounds.top), boundsBottom - cropState.selection.height);
+      renderCropSelection();
+    }
+
+    function getNextCropSelection(mode, dx, dy) {
+      const start = cropState.drag.startSelection;
+      const bounds = cropState.imageBounds;
+      const boundsRight = getCropBoundsRight(bounds);
+      const boundsBottom = getCropBoundsBottom(bounds);
+
+      let left = start.x;
+      let top = start.y;
+      let right = start.x + start.width;
+      let bottom = start.y + start.height;
+
+      if (mode === 'move') {
+        left += dx;
+        right += dx;
+        top += dy;
+        bottom += dy;
+
+        if (left < bounds.left) {
+          right += bounds.left - left;
+          left = bounds.left;
+        }
+        if (right > boundsRight) {
+          left -= right - boundsRight;
+          right = boundsRight;
+        }
+        if (top < bounds.top) {
+          bottom += bounds.top - top;
+          top = bounds.top;
+        }
+        if (bottom > boundsBottom) {
+          top -= bottom - boundsBottom;
+          bottom = boundsBottom;
+        }
+      } else {
+        if (mode.includes('w')) left += dx;
+        if (mode.includes('e')) right += dx;
+        if (mode.includes('n')) top += dy;
+        if (mode.includes('s')) bottom += dy;
+
+        if (mode.includes('w')) left = Math.min(Math.max(left, bounds.left), right - MIN_CROP_SIZE);
+        if (mode.includes('e')) right = Math.max(Math.min(right, boundsRight), left + MIN_CROP_SIZE);
+        if (mode.includes('n')) top = Math.min(Math.max(top, bounds.top), bottom - MIN_CROP_SIZE);
+        if (mode.includes('s')) bottom = Math.max(Math.min(bottom, boundsBottom), top + MIN_CROP_SIZE);
+      }
+
+      return {
+        x: left,
+        y: top,
+        width: right - left,
+        height: bottom - top
+      };
+    }
+
+    function finishCropSelection(result) {
+      const resolver = cropState.resolver;
+      cropState.resolver = null;
+      cropState.file = null;
+      cropState.imageBounds = null;
+      cropState.selection = null;
+      cropState.drag = null;
+      cropImage.onload = null;
+      cropImage.src = '';
+      cropSelection.style.display = 'none';
+      cropModal.classList.remove('active');
+      document.body.style.overflow = '';
+      revokeCropObjectUrl();
+      if (resolver) resolver(result);
+    }
+
+    function cancelCropSelection() {
+      finishCropSelection(null);
+    }
+
+    async function exportCroppedBlob() {
+      if (!cropState.imageBounds || !cropState.selection || !cropImage.naturalWidth) {
+        throw new Error('Crop selection is not ready');
+      }
+
+      const scaleX = cropImage.naturalWidth / cropState.imageBounds.width;
+      const scaleY = cropImage.naturalHeight / cropState.imageBounds.height;
+      const cropX = Math.max(0, Math.round((cropState.selection.x - cropState.imageBounds.left) * scaleX));
+      const cropY = Math.max(0, Math.round((cropState.selection.y - cropState.imageBounds.top) * scaleY));
+      const cropWidth = Math.max(1, Math.round(cropState.selection.width * scaleX));
+      const cropHeight = Math.max(1, Math.round(cropState.selection.height * scaleY));
+      const maxDimension = 2200;
+      const scale = Math.min(1, maxDimension / Math.max(cropWidth, cropHeight));
+      const outputWidth = Math.max(1, Math.round(cropWidth * scale));
+      const outputHeight = Math.max(1, Math.round(cropHeight * scale));
+      const canvas = document.createElement('canvas');
+      canvas.width = outputWidth;
+      canvas.height = outputHeight;
+
+      const context = canvas.getContext('2d');
+      context.drawImage(
+        cropImage,
+        cropX,
+        cropY,
+        cropWidth,
+        cropHeight,
+        0,
+        0,
+        outputWidth,
+        outputHeight
+      );
+
+      return new Promise((resolve, reject) => {
+        canvas.toBlob(blob => {
+          if (blob) resolve(blob);
+          else reject(new Error('Crop export failed'));
+        }, 'image/jpeg', 0.88);
+      });
+    }
+
+    async function openCropper(file) {
+      revokeCropObjectUrl();
+
       return new Promise(resolve => {
-        const img = new Image();
-        img.onload = () => {
-          const c = document.createElement('canvas');
-          let { w, h } = img;
-          if (w > maxW) { h = h * maxW / w; w = maxW; }
-          c.width = w; c.height = h;
-          c.getContext('2d').drawImage(img, 0, 0, w, h);
-          c.toBlob(resolve, 'image/jpeg', q);
+        cropState.resolver = resolve;
+        cropState.file = file;
+        cropState.imageBounds = null;
+        cropState.selection = null;
+        cropState.drag = null;
+        cropMeta.textContent = '正在生成预览...';
+        cropModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+
+        cropState.objectUrl = URL.createObjectURL(file);
+        cropImage.onload = () => {
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              syncCropBounds(true);
+            });
+          });
         };
-        img.src = URL.createObjectURL(file);
+        cropImage.src = cropState.objectUrl;
       });
     }
 
@@ -1221,35 +1769,95 @@
       setTimeout(() => { el.style.opacity = '0'; }, 2000);
     }
 
-    async function uploadToOSS(file) {
-      const compressed = await compressImage(file);
-      const fname = `photos/${Date.now()}_${file.name}`;
+    async function uploadToOSS(fileBlob, originalName) {
+      const safeName = (originalName || 'photo.jpg').replace(/[^\w.-]+/g, '_');
+      const fname = `photos/${Date.now()}_${safeName.replace(/\.[^.]+$/, '')}.jpg`;
       const url = `${OSS_HOST}/${fname}`;
       const res = await fetch(url, {
         method: 'PUT',
-        body: compressed,
+        body: fileBlob,
         headers: { 'Content-Type': 'image/jpeg' }
       });
       if (!res.ok) throw new Error('Upload failed');
       return url;
     }
 
+    cropSelection.addEventListener('pointerdown', e => {
+      if (!cropState.selection || !cropState.imageBounds) return;
+      cropState.drag = {
+        mode: e.target.dataset.handle || 'move',
+        startX: e.clientX,
+        startY: e.clientY,
+        startSelection: { ...cropState.selection }
+      };
+      e.preventDefault();
+    });
+
+    document.addEventListener('pointermove', e => {
+      if (!cropState.drag) return;
+      const dx = e.clientX - cropState.drag.startX;
+      const dy = e.clientY - cropState.drag.startY;
+      cropState.selection = getNextCropSelection(cropState.drag.mode, dx, dy);
+      renderCropSelection();
+    });
+
+    document.addEventListener('pointerup', () => {
+      cropState.drag = null;
+    });
+
+    cropReset.addEventListener('click', () => syncCropBounds(true));
+    cropCancel.addEventListener('click', cancelCropSelection);
+    cropConfirm.addEventListener('click', async () => {
+      try {
+        cropConfirm.disabled = true;
+        const croppedBlob = await exportCroppedBlob();
+        finishCropSelection(croppedBlob);
+      } catch (e) {
+        console.error('Crop export failed.', e);
+        showUploadStatus('Crop failed ✗');
+      } finally {
+        cropConfirm.disabled = false;
+      }
+    });
+
+    cropModal.addEventListener('click', e => {
+      if (e.target.id === 'cropModal') cancelCropSelection();
+    });
+
+    window.addEventListener('resize', () => {
+      if (cropModal.classList.contains('active')) {
+        syncCropBounds(false);
+      }
+    });
+
     async function handleFiles(files) {
       for (const file of Array.from(files)) {
         if (!file.type.startsWith('image/')) continue;
         try {
+          const croppedBlob = await openCropper(file);
+          if (!croppedBlob) {
+            showUploadStatus('已取消上传');
+            break;
+          }
+
           showUploadStatus('Uploading...');
-          const ossUrl = await uploadToOSS(file);
-          photos.push({ src: ossUrl, date: '2026-03', description: '', id: Date.now() });
-          await savePhotos();
+          const ossUrl = await uploadToOSS(croppedBlob, file.name);
+          await savePhoto({
+            src: ossUrl,
+            date: DEFAULT_PHOTO_DATE,
+            description: '',
+            id: makePhotoId()
+          });
           sortPhotos();
           renderGrid();
           renderSpread();
           showUploadStatus('Uploaded ✓');
         } catch (e) {
+          console.error('Upload photo failed.', e);
           showUploadStatus('Upload failed ✗');
         }
       }
+      fileInput.value = '';
     }
 
     fileInput.addEventListener('change', e => handleFiles(e.target.files));
@@ -1309,8 +1917,7 @@
     // 初始化
     async function init() {
       updateRhDate();
-      const loaded = await loadPhotos();
-      loaded.forEach((p, i) => photos.push({ ...p, id: Date.now() + i }));
+      photos = await loadPhotos();
       sortPhotos();
       renderGrid();
       renderSpread();
