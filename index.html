@@ -149,60 +149,65 @@
       margin-top: 4px;
     }
 
-    /* 恋爱计时 */
-    .love-counter {
-      text-align: right;
-      position: relative;
+    /* 恋爱计时 - 醒目横幅 */
+    .love-banner {
+      position: absolute;
+      bottom: 20px;
+      left: 60px;
+      right: 60px;
+      display: flex;
+      justify-content: center;
+      z-index: 10;
     }
 
-    .love-days {
-      font-family: 'Playfair Display', serif;
-      font-size: 4.5rem;
-      font-weight: 700;
-      line-height: 1;
-      background: linear-gradient(135deg, #ff6b9d 0%, #ff8fab 50%, #e84a7f 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      letter-spacing: -0.03em;
-      animation: heartbeat 2s ease-in-out infinite;
+    .love-banner-inner {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, rgba(255,107,157,0.15), rgba(255,143,171,0.08));
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,107,157,0.3);
+      border-radius: 50px;
+      padding: 12px 30px;
+      box-shadow: 0 4px 30px rgba(255,107,157,0.2);
+    }
+
+    .love-banner-icon {
+      font-size: 1.5rem;
+      animation: heartbeat 1.5s ease-in-out infinite;
     }
 
     @keyframes heartbeat {
       0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.02); }
+      50% { transform: scale(1.15); }
     }
 
-    .love-label {
-      font-family: 'Caveat', cursive;
-      font-size: 1.1rem;
-      background: linear-gradient(90deg, #ff6b9d, #ff8fab);
-      -webkit-background-clip: text;
+    .love-banner-days {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #ff6b9d, #ff8fab, #e84a7f);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      margin-top: 4px;
-      font-weight: 500;
+      line-height: 1;
     }
 
-    .love-since {
+    .love-banner-unit {
       font-family: 'Caveat', cursive;
-      font-size: 1rem;
-      color: #d4a5b3;
-      margin-top: 8px;
+      font-size: 1.3rem;
+      color: #e84a7f;
     }
 
-    .love-hearts {
-      position: absolute;
-      top: -10px;
-      right: 0;
+    .love-banner-divider {
+      color: rgba(255,107,157,0.4);
       font-size: 1.2rem;
-      animation: floatHeart 3s ease-in-out infinite;
     }
 
-    @keyframes floatHeart {
-      0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.8; }
-      50% { transform: translateY(-5px) rotate(10deg); opacity: 1; }
+    .love-banner-since {
+      font-family: 'Caveat', cursive;
+      font-size: 1.1rem;
+      color: #d4a5b3;
     }
 
     /* 报头装饰线 */
@@ -1110,14 +1115,20 @@
         <div class="subtitle">每一帧都是值得珍藏的故事</div>
       </div>
 
-      <div class="masthead-right">
-        <div class="love-counter">
-          <div class="love-hearts">♥</div>
-          <div class="love-days" id="loveDays">--</div>
-          <div class="love-label">Days Together</div>
-          <div class="love-since" id="loveSince">Since Nov 26, 2023</div>
+      <!-- 恋爱计时 - 醒目展示 -->
+      <div class="love-banner">
+        <div class="love-banner-inner">
+          <span class="love-banner-icon">♥</span>
+          <span class="love-banner-days" id="loveDaysBanner">--</span>
+          <span class="love-banner-unit">天</span>
+          <span class="love-banner-divider">|</span>
+          <span class="love-banner-since" id="loveSinceBanner">2023.11.26 起</span>
         </div>
-        <div class="volume-meta" style="margin-top:20px;">Our Story · Vol. I</div>
+      </div>
+
+      <div class="masthead-right">
+        <div class="volume-number">2026</div>
+        <div class="volume-meta">Vol. I</div>
       </div>
     </div>
   </header>
@@ -1947,26 +1958,13 @@
       const diffTime = now - startDate;
       const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
-      // 计算年、月、日
-      let years = now.getFullYear() - startDate.getFullYear();
-      let months = now.getMonth() - startDate.getMonth();
-      let days = now.getDate() - startDate.getDate();
+      // 格式化为 YYYY.MM.DD
+      const y = startDate.getFullYear();
+      const m = String(startDate.getMonth() + 1).padStart(2, '0');
+      const d = String(startDate.getDate()).padStart(2, '0');
 
-      if (days < 0) {
-        months--;
-        const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
-        days += prevMonth.getDate();
-      }
-      if (months < 0) {
-        years--;
-        months += 12;
-      }
-
-      const yStr = years > 0 ? `${years}Y · ` : '';
-      const mStr = `${months}M · ${days}D`;
-
-      document.getElementById('loveDays').textContent = diffDays;
-      document.getElementById('loveSince').textContent = `${yStr}${mStr}`;
+      document.getElementById('loveDaysBanner').textContent = diffDays;
+      document.getElementById('loveSinceBanner').textContent = `${y}.${m}.${d} 起`;
     }
 
     // 轮播自动滚动
